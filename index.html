@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/styles/reset.css" />
+    <link rel="stylesheet" href="./assets/styles/index.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="./assets/script/light-speed-typer.js" type="module"></script>
+    <title>Speed Typing Game</title>
+</head>
+<body>
+    <main>
+        <div class="container game-header">
+            <div class="start-restart-btn">
+                <button id="start-btn">
+                    <i class="fas fa-play start-icon"></i>
+                    Start</button>
+            </div>
+            <h1>
+                <span>L</span>
+                <span>i</span>
+                <span>g</span>
+                <span>h</span>
+                <span>t</span>
+                <span>&nbsp;</span>
+                <span>S</span>
+                <span>p</span>
+                <span>e</span>
+                <span>e</span>
+                <span>d</span>
+                <span>&nbsp;</span>
+                <span>T</span>
+                <span>y</span>
+                <span>p</span>
+                <span>i</span>
+                <span>n</span>
+                <span>g</span>
+            </h1>
+            <div class="timer">
+                <i class="fas fa-clock">    
+                </i>
+                <span id="time">0&nbsp;s</span>
+            </div>
+        </div>
+        <div class="container input-output ">
+            <div class="output-container">
+                <p class="output" id="output"></p>
+            </div>
+            <div class="input-container">
+                <input class="input" type="text" id="input" placeholder="Start typing...">
+            </div>
+        </div>
+        <div class="container score-board">
+            <div class="high-score">
+                <p>High Score: <span id="high-score">0</span></p>
+            </div>
+            <div class="score">
+                <p>Score: <span id="score">0</span></p>
+            </div>
+            <div class="score-dashboard">
+                <h2>Score board</h2>
+                <p class="last-score"></p>
+            </div>
+        </div>
+    </main>
+    
+</body>
+</html>
