@@ -43,6 +43,7 @@ let currentWord = "";
 let timeRemaining = 99;
 let score = 0;
 let gameLoopTimeoutId = null;
+let wordsInGame = [];
 
 /*
 !------------------------------------------
@@ -95,15 +96,16 @@ function playSoundForLimitedTime(audio, duration) {
 */
 
 function startGame() {
-  resetGame();
-  backgroundMusic.play();
-  generateWords();
-  gameLoop();
-  setTimeout(
-    () => playSoundForLimitedTime(timesUpSound, 30000),
-    TIMES_UP_DELAY
-  );
-}
+    resetGame();
+    wordsInGame = [...words]; // Create a copy of the words array
+    backgroundMusic.play();
+    generateWords();
+    gameLoop();
+    setTimeout(
+      () => playSoundForLimitedTime(timesUpSound, 30000),
+      TIMES_UP_DELAY
+    );
+  }
 
 function updateScore() {
   score++;
@@ -139,12 +141,12 @@ function validateInput(event) {
 onEvent("keypress", inputField, validateInput);
 
 function createScoreObject(finalScore) {
-  return new Score(
-    new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-    finalScore,
-    ((finalScore / words.length) * 100).toFixed(2)
-  );
-}
+    return new Score(
+      new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      finalScore,
+      ((finalScore / words.length) * 100).toFixed(2) // Use words.length instead of wordsInGame.length
+    );
+  }
 
 function updateTitle(message) {
   for (let i = 0; i < titleSpans.length; i++) {
@@ -305,16 +307,16 @@ const words = [
 ];
 
 function generateWords() {
-  let index = Math.floor(Math.random() * words.length);
-  currentWord = words.splice(index, 1)[0];
-  wordDisplay.textContent = ""; 
-
-  for (let letter of currentWord) {
-    let span = document.createElement("span");
-    span.textContent = letter;
-    wordDisplay.appendChild(span);
+    let index = Math.floor(Math.random() * wordsInGame.length);
+    currentWord = wordsInGame.splice(index, 1)[0]; // Use wordsInGame instead of words
+    wordDisplay.textContent = ""; 
+  
+    for (let letter of currentWord) {
+      let span = document.createElement("span");
+      span.textContent = letter;
+      wordDisplay.appendChild(span);
+    }
   }
-}
 
 function handleInput() {
   let spans = wordDisplay.querySelectorAll("span");
