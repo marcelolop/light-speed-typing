@@ -17,11 +17,13 @@ const scoreDisplay = getElement('score');
 const inputField = getElement('input');
 const lastScores = select('.last-score');
 const startIcon = select('.start-icon');
+const titleSpans = selectAll('.title span');
 
 
 let currentWord = '';
 let timeRemaining = 99;
 let score = 0;
+let gameLoopTimeoutId = null;
 
 /*
 !------------------------------------------
@@ -40,6 +42,11 @@ typingSound.src = './assets/media/sounds/typing-sound.mp3';
 typingSound.volume = 0.05;
 typingSound.playbackRate = 5;
 typingSound.preload = 'auto';
+
+const timesUpSound = new Audio();
+timesUpSound.src = './assets/media/sounds/times-up.mp3';
+timesUpSound.volume = 0.1;
+timesUpSound.preload = 'auto';
 
 onEvent('input', inputField, () => {
     typingSound.play();
@@ -67,13 +74,14 @@ function startGame() {
     }
     inputField.placeholder = '';
     gameLoop();
+    setTimeout(function() {
+        timesUpSound.play();
+    }, 79000);
 }
 
-let gameLoopTimeoutId = null;
 
 function gameLoop() {
     timeDisplay.textContent = `${timeRemaining} s`;
-    
     
     if (timeRemaining <= 0) {
         endGame();
@@ -92,11 +100,13 @@ function gameLoop() {
     gameLoopTimeoutId = setTimeout(gameLoop, 1000);
 }
 
-inputField.addEventListener('keypress', function (event) {
+function validateInput(event) {
     if (!/^[a-zA-Z]+$/.test(event.key)) {
         event.preventDefault();
     }
-});
+}
+
+onEvent('keypress', inputField, validateInput);
 
 function endGame() {
     startButton.textContent = 'Reset';
@@ -111,13 +121,48 @@ function endGame() {
         (score / 120 * 100).toFixed(2)
     );
 
+    // Update the high score
+    updateHighScore();
+
     // Create a new score element
     const newScoreElement = document.createElement('p');
     newScoreElement.textContent = scoreObject.toString();
 
     // Append the new score element to the score board
     lastScores.appendChild(newScoreElement);
+
+    let message;
+
+    if (score === 120) {
+        message = "Flawless Victory";
+    } else {
+        message = "Game Over";
+    }
+
+    for (let i = 0; i < titleSpans.length; i++) {
+        if (message[i]) {
+            titleSpans[i].textContent = message[i];
+            titleSpans[i].style.color = message === "Flawless Victory" ? 'green' : 'red';
+        } else {
+            titleSpans[i].textContent = '';
+        }
+    }
 }
+
+function resetTitle() {
+    let originalTitle = "Light Speed Typing";
+
+    for (let i = 0; i < titleSpans.length; i++) {
+        if (originalTitle[i]) {
+            titleSpans[i].textContent = originalTitle[i];
+            titleSpans[i].style.color = '#ffe100'; // Reset to original color
+        } else {
+            titleSpans[i].textContent = '';
+        }
+    }
+}
+
+onEvent('click', startButton, resetTitle);
 
 function handleButtonClick() {
     if (startButton.textContent === 'Reset') {
@@ -139,11 +184,21 @@ function resetGame() {
 
 onEvent('click', startButton, handleButtonClick);
 
-/*
-!------------------------------------------
-!              TIME COUNTDOWN             |
-!------------------------------------------
-*/
+function updateHighScore() {
+    // get the high score from local storage
+    let highScore = localStorage.getItem('highScore');
+
+    // if there is no high score in local storage or the current score is higher
+    if (!highScore || score > highScore) {
+        // update the high score in local storage
+        localStorage.setItem('highScore', score);
+        highScore = score;
+    }
+
+    // update the high score display
+    const highScoreDisplay = document.getElementById('high-score');
+    highScoreDisplay.textContent = highScore;
+}
 
 /*
 !------------------------------------------
@@ -174,7 +229,45 @@ const words = [
 
 function generateWords() {
     let index = Math.floor(Math.random() * words.length);
-        currentWord = words.splice(index, 1)[0];
-        wordDisplay.textContent = currentWord;
+    currentWord = words.splice(index, 1)[0];
+    wordDisplay.textContent = ''; // clear the word display
+
+    // create a span for each letter in the word
+    for (let letter of currentWord) {
+        let span = document.createElement('span');
+        span.textContent = letter;
+        wordDisplay.appendChild(span);
+    }
 }
 
+function handleInput() {
+    // get the spans in the word display
+    let spans = wordDisplay.querySelectorAll('span');
+    // get the input value
+    let inputValue = inputField.value;
+
+    // iterate over each span
+    for (let i = 0; i < spans.length; i++) {
+        // if the input has a letter at this position
+        if (inputValue[i]) {
+            // if the letter is correct
+            if (inputValue[i] === spans[i].textContent) {
+                // add the green class to the span
+                spans[i].classList.add('valid');
+                // remove the red class from the span
+                spans[i].classList.remove('invalid');
+            } else {
+                // otherwise, add the red class to the span
+                spans[i].classList.add('invalid');
+                // remove the green class from the span
+                spans[i].classList.remove('valid');
+            }
+        } else {
+            // if there is no input for this position, remove both classes
+            spans[i].classList.remove('valid');
+            spans[i].classList.remove('invalid');
+        }
+    }
+}
+
+onEvent('input', inputField, handleInput);

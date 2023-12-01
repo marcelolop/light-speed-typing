@@ -50,20 +50,36 @@ body {
 }
 
 .game-header h1 {
-    font-size: 4rem;
+    font-size: 4.5rem;
     font-weight: 700;
     color: #ffe100;
     text-shadow: #000 1rem 1rem 1rem ;
 }
 
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title .space {
+    width: 1ch;
+}
+
 @keyframes letterFadeIn {
-    0% { opacity: 0; }
-    10% { opacity: 1; }
-    100% { opacity: 0; }
+    0%, 100% { 
+        opacity: 0; 
+        transform: translateY(2rem);
+    }
+    50% { 
+        opacity: 1; 
+        transform: translateY(-2rem);
+    }
 }
 
 .game-header h1 span {
     opacity: 0;
+    display: inline-block;
     animation: letterFadeIn 4s infinite;
 }
 
@@ -155,6 +171,14 @@ body {
 
 .output-container p {
     animation: fadeIn 0.3s ease-in-out;
+}
+
+.valid {
+    color: #00ff00;
+}
+
+.invalid {
+    color: #ff0000;
 }
 
 .input-container {
