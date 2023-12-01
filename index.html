@@ -12,37 +12,38 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="./assets/script/light-speed-typer.js" type="module"></script>
-    <title>Speed Typing Game</title>
+    <link rel="icon" href="./assets/media/images/logo/logo.png" type="image/x-icon">
+    <script src="./assets/script/game.js" type="module"></script>
+    <title>Light Speed Typing</title>
 </head>
 <body>
     <main>
         <div class="container game-header">
             <div class="start-restart-btn">
                 <button id="start-btn">
-                    <i class="fas fa-play start-icon"></i>
+                    <i id ="start-icon" class="fas fa-play start-icon"></i>
                     Start</button>
             </div>
-            <h1 class="title">
+            <div class="title">
                 <span>L</span>
                 <span>i</span>
                 <span>g</span>
                 <span>h</span>
                 <span>t</span>
-                <span class="space"> </span> <!-- Use a span with a literal space here -->
+                <span class="space"> </span>
                 <span>S</span>
                 <span>p</span>
                 <span>e</span>
                 <span>e</span>
                 <span>d</span>
-                <span class="space"> </span> <!-- And here -->
+                <span class="space"> </span> 
                 <span>T</span>
                 <span>y</span>
                 <span>p</span>
                 <span>i</span>
                 <span>n</span>
                 <span>g</span>
-            </h1>
+            </div>
             <div class="timer">
                 <i class="fas fa-clock">    
                 </i>
@@ -54,19 +55,36 @@
                 <p class="output" id="output"></p>
             </div>
             <div class="input-container">
-                <input class="input" type="text" id="input" placeholder="Start typing...">
+                <input class="input" type="text" id="input" placeholder="Start Typing">
             </div>
         </div>
         <div class="container score-board">
-            <div class="high-score">
-                <p>High Score: <span id="high-score">0</span></p>
-            </div>
-            <div class="score">
-                <p>Score: <span id="score">0</span></p>
+            <div class="current-score">
+                <div class="high">
+                    <p>High Score: <span id="high-score">0</span></p>
+                </div>
+                <div class="score">
+                    <p>Score: <span id="score">0</span></p>
+                </div>
             </div>
             <div class="score-dashboard">
-                <h2>Score board</h2>
-                <p class="last-score"></p>
+                <h2>Scoreboard</h2>
+                <button class="toggle-button" id="toggleButton"><i id="arrow" class="fas fa-arrow-down"></i></button>
+                <div id="scoreboard">
+                    <!-- Seus scores vão aqui -->
+                    <div class="date-score-container">
+                        <h3>Date</h3>
+                        <p class="date-score"></p>
+                    </div>
+                    <div class="score-score-container">
+                        <h3>Score</h3>
+                        <p class="score-score"></p>
+                    </div>
+                    <div class="percentage-score-container">
+                        <h3>Percentage</h3>
+                        <p class="percentage-score"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
