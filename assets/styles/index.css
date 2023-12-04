@@ -248,6 +248,7 @@ div.timer span {
     border-radius: 2rem;
     border: var(--app-main-color) dashed 0.2rem;
     animation: rainbowBorder 5s linear infinite;
+    user-select: none;
 }
 
 @keyframes fadeIn {
