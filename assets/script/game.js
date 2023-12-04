@@ -104,7 +104,8 @@ function startGame() {
     setTimeout(
       () => playSoundForLimitedTime(timesUpSound, 30000),
       TIMES_UP_DELAY
-    );
+  );
+  inputField.focus();
   }
 
 function updateScore() {
@@ -225,6 +226,7 @@ function resetGame() {
   clearGameLoop();
   clearIO();
   backgroundMusic.currentTime = 0;
+  inputField.focus();
 }
 
 function resetButton() {
@@ -336,6 +338,7 @@ function handleInput() {
       spans[i].classList.remove("invalid");
     }
   }
+  inputField.focus();
 }
 
 onEvent("input", inputField, handleInput);
