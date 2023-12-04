@@ -194,6 +194,10 @@ body {
         transform: scale(0.9);
         transition: transform 0.2s;
     }
+
+    & i {
+        font-size: 2.5rem;
+    }
 }
 
 div.timer span {
