@@ -55,7 +55,6 @@ const countdown = getElement("countdown");
 !------------------------------------------
 */
 
-
 //* GAME VARIABLES
 let currentWord = "";
 let timeRemaining =20;
@@ -68,8 +67,6 @@ let timesUpSoundTimeoutId = null;
 const TIMES_UP_DELAY = 10000;
 const GAME_LOOP_DELAY = 1000;
 const finalScore = score;
-
-
 
 /*
 !------------------------------------------
@@ -249,7 +246,8 @@ function getEndGameMessage(finalScore) {
   return finalScore === wordsInGame.length ? "Flawless Victory" : "Game Over!";
 }
 function endGame() {
-  const scoreObject = createScoreObject(finalScore);
+  let totalScore = score;
+  const scoreObject = createScoreObject(totalScore);
   
   updateHighScore();
 
@@ -274,7 +272,12 @@ function storeScoreValues(scoreObject) {
   let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
   scoreboard.push(scoreObject); 
 
-  scoreboard.sort((a, b) => b.hits - a.hits);
+  scoreboard.sort((a, b) => {
+    if (b.hits !== a.hits) {
+      return b.hits - a.hits;
+    }
+    return new Date(b.date) - new Date(a.date);
+  });
 
   if (scoreboard.length > 10) {
     scoreboard.length = 10;
@@ -285,7 +288,7 @@ function storeScoreValues(scoreObject) {
 
 function generateTitleSpans(title) {
   const titleContainer = document.querySelector('.title');
-  titleContainer.innerHTML = ''; // Clear the title container
+  titleContainer.innerHTML = '';
 
   for (let char of title) {
     let span = document.createElement('span');
