@@ -3,25 +3,6 @@
 import { onEvent, getElement, select, selectAll } from "./util/general.js";
 
 /*
-Directions and requirements
-* Utilize the typing game created in the previous course.
-* Address and fix the issues highlighted in the earlier feedback (this step is crucial).
-* Ensure your game lasts between 15 and 20 seconds so that we can easily test it.
-* Use regular objects to store hits, percentage and date. Don't use the Score class here.
-* Incorporate these objects into an array and store the array using localStorage.
-* Employ JSON.stringify() and JSON.parse() for manipulating the data (the array of objects).
-* Sort and 'splice' the array of ‘scores’ by hits before storing it, so you can always store the top
-* games, not all of them. localStorage is limited.
-* Display the top 9 or 10 scores in the scoreboard (see example provided).
-* Ensure the scoreboard updates after every game (whenever the player gets a better score).
-* Decide whether to automatically display the scoreboard when the game ends or implement a
-* button for this purpose, available upon page loading and game completion. Don't show the
-* scoreboard midgame.
-* Display the scoreboard only when it contains data; otherwise, show a message indicating no
-* games have been played.
-*/
-
-/*
 !------------------------------------------
 !              DOM ELEMENTS              |
 !------------------------------------------
