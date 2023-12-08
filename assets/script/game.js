@@ -57,7 +57,7 @@ const countdown = getElement("countdown");
 
 //* GAME VARIABLES
 let currentWord = "";
-let timeRemaining =20;
+let timeRemaining = 20;
 let score = 0;
 let gameLoopTimeoutId = null;
 let wordsInGame = [];
@@ -99,9 +99,10 @@ const timesUpSound = createAudio("./assets/media/sounds/times-up.mp3", 0.2);
 const gameOverSound = createAudio("./assets/media/sounds/game-over.mp3", 0.2);
 const countdownSound = createAudio(
   "./assets/media/sounds/countdown.mp3",
-  0.2, false, 1
+  0.2,
+  false,
+  1
 );
-
 
 onEvent("keydown", inputField, () => {
   const sound = typingSound.cloneNode();
@@ -129,14 +130,16 @@ window.onload = function () {
   let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
   scoreboard.sort((a, b) => b.hits - a.hits);
 
-  scoreboard.forEach(score => {
+  scoreboard.forEach((score) => {
     dateScoreContainer.appendChild(createParagraphElement(`${score.date}`));
     scoreScoreContainer.appendChild(createParagraphElement(`${score.hits}`));
-    percentageScoreContainer.appendChild(createParagraphElement(`${score.percentage}%`));
+    percentageScoreContainer.appendChild(
+      createParagraphElement(`${score.percentage}%`)
+    );
   });
 
   detectScoreboard();
-}
+};
 
 function startGame() {
   inputField.disabled = false;
@@ -146,15 +149,15 @@ function startGame() {
   countdownSound.play();
   playSoundForLimitedTime(countdownSound, 4000);
   countdownElement.textContent = countdownNumber;
-  countdownElement.classList.remove('go-text');
+  countdownElement.classList.remove("go-text");
   toggleButton.disabled = true;
-  let countdownInterval = setInterval(function() {
+  let countdownInterval = setInterval(function () {
     countdownNumber--;
     if (countdownNumber <= 0) {
       clearInterval(countdownInterval);
-      countdownElement.textContent = 'GO!';
-      countdownElement.classList.add('go-text'); 
-      setTimeout(function() {
+      countdownElement.textContent = "GO!";
+      countdownElement.classList.add("go-text");
+      setTimeout(function () {
         countdownModal.close();
         resetGame();
         wordsInGame = [...words];
@@ -167,7 +170,7 @@ function startGame() {
         );
         inputField.disabled = false;
         inputField.focus();
-        document.body.classList.add('game-started');
+        document.body.classList.add("game-started");
       }, 1000);
     } else {
       countdownElement.textContent = countdownNumber;
@@ -185,7 +188,6 @@ function updateScore() {
     endGame();
   }
 }
-
 
 function gameLoop() {
   if (wordsInGame.length === 0) {
@@ -216,23 +218,29 @@ function validateInput(event) {
 onEvent("keypress", inputField, validateInput);
 
 function createScoreObject(finalScore) {
-  const date = new Date().toLocaleString("en-US", {month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+  const date = new Date().toLocaleString("en-US", {
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   const score = finalScore;
   const percentage = ((finalScore / words.length) * 100).toFixed(2);
 
   return {
     date: date,
     hits: score,
-    percentage: percentage
+    percentage: percentage,
   };
 }
 
 function updateTitle(message) {
   generateTitleSpans(message);
-  const titleSpans = document.querySelectorAll('.title span');
+  const titleSpans = document.querySelectorAll(".title span");
 
   for (let i = 0; i < titleSpans.length; i++) {
-    titleSpans[i].style.color = message === "Flawless Victory" ? "green" : "red";
+    titleSpans[i].style.color =
+      message === "Flawless Victory" ? "green" : "red";
   }
 }
 
@@ -248,12 +256,16 @@ function getEndGameMessage(finalScore) {
 function endGame() {
   let totalScore = score;
   const scoreObject = createScoreObject(totalScore);
-  
+
   updateHighScore();
 
   dateScoreContainer.appendChild(createParagraphElement(`${scoreObject.date}`));
-  scoreScoreContainer.appendChild(createParagraphElement(`${scoreObject.hits}`));
-  percentageScoreContainer.appendChild(createParagraphElement(`${scoreObject.percentage}%`));
+  scoreScoreContainer.appendChild(
+    createParagraphElement(`${scoreObject.hits}`)
+  );
+  percentageScoreContainer.appendChild(
+    createParagraphElement(`${scoreObject.percentage}%`)
+  );
 
   const message = getEndGameMessage(finalScore);
 
@@ -270,7 +282,7 @@ function endGame() {
 
 function storeScoreValues(scoreObject) {
   let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
-  scoreboard.push(scoreObject); 
+  scoreboard.push(scoreObject);
 
   scoreboard.sort((a, b) => {
     if (b.hits !== a.hits) {
@@ -287,11 +299,11 @@ function storeScoreValues(scoreObject) {
 }
 
 function generateTitleSpans(title) {
-  const titleContainer = document.querySelector('.title');
-  titleContainer.innerHTML = '';
+  const titleContainer = document.querySelector(".title");
+  titleContainer.innerHTML = "";
 
   for (let char of title) {
-    let span = document.createElement('span');
+    let span = document.createElement("span");
     span.textContent = char === " " ? "" : char;
     span.className = char === " " ? "space" : "";
     span.style.color = "#fff";
@@ -300,15 +312,19 @@ function generateTitleSpans(title) {
 }
 
 function updateScoreboard() {
-  selectAll(".date-score-container p").forEach(el => el.innerHTML = '');
-  selectAll(".score-score-container p").forEach(el => el.innerHTML = '');
-  selectAll(".percentage-score-container p").forEach(el => el.innerHTML = '');
+  selectAll(".date-score-container p").forEach((el) => (el.innerHTML = ""));
+  selectAll(".score-score-container p").forEach((el) => (el.innerHTML = ""));
+  selectAll(".percentage-score-container p").forEach(
+    (el) => (el.innerHTML = "")
+  );
 
   let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
-  scoreboard.forEach(score => {
+  scoreboard.forEach((score) => {
     dateScoreContainer.appendChild(createParagraphElement(`${score.date}`));
     scoreScoreContainer.appendChild(createParagraphElement(`${score.hits}`));
-    percentageScoreContainer.appendChild(createParagraphElement(`${score.percentage}%`));
+    percentageScoreContainer.appendChild(
+      createParagraphElement(`${score.percentage}%`)
+    );
   });
 }
 
@@ -340,7 +356,7 @@ function resetGame() {
   }
   inputField.focus();
   inputField.disabled = true;
-  document.body.classList.remove('game-started');
+  document.body.classList.remove("game-started");
   inputField.value = "";
   resetTitle();
 }
@@ -358,7 +374,7 @@ function shuffleWords() {
 
 function resetGameState() {
   currentWord = "";
-  timeRemaining =20;
+  timeRemaining = 20;
   score = 0;
   inputField.placeholder = "";
   scoreDisplay.textContent = score;
@@ -420,12 +436,12 @@ const words = [
   'download', 'blue', 'actor', 'desk', 'watch', 'giraffe', 'brazil', 'mask',
   'audio', 'school', 'detective', 'hero', 'progress', 'winter', 'passion',
   'rebel', 'amber', 'jacket', 'article', 'paradox', 'social', 'resort', 'escape'
- ];
+ ]
 
 function generateWords() {
   let index = Math.floor(Math.random() * wordsInGame.length);
   currentWord = wordsInGame.splice(index, 1)[0];
-  wordDisplay.textContent = ""; 
+  wordDisplay.textContent = "";
 
   if (currentWord) {
     for (let letter of currentWord) {
@@ -436,20 +452,22 @@ function generateWords() {
   }
 }
 
-  function handleInput() {
-    let spans = wordDisplay.querySelectorAll("span");
-    let inputValue = inputField.value;
-  
-    for (let i = 0; i < spans.length; i++) {
-      if (inputValue[i] && inputValue[i].toLowerCase() === spans[i].textContent.toLowerCase()) {
-        spans[i].classList.add("valid");
-      } else {
-        spans[i].classList.remove("valid");
-      }
+function handleInput() {
+  let spans = wordDisplay.querySelectorAll("span");
+  let inputValue = inputField.value;
+
+  for (let i = 0; i < spans.length; i++) {
+    if (
+      inputValue[i] &&
+      inputValue[i].toLowerCase() === spans[i].textContent.toLowerCase()
+    ) {
+      spans[i].classList.add("valid");
+    } else {
+      spans[i].classList.remove("valid");
     }
-    inputField.focus();
   }
-  
+  inputField.focus();
+}
 
 onEvent("input", inputField, handleInput);
 
@@ -466,6 +484,8 @@ function detectScoreboard() {
     scoreboardMessage.textContent = "No games have been played yet!";
     toggleButton.disabled = true;
   } else {
-    scoreboardMessage.textContent = `High Score: ${localStorage.getItem("highScore")}`;
+    scoreboardMessage.textContent = `High Score: ${localStorage.getItem(
+      "highScore"
+    )}`;
   }
 }
