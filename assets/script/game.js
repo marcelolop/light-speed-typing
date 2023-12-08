@@ -33,7 +33,6 @@ const wordDisplay = getElement("output");
 const timeDisplay = getElement("time");
 const scoreDisplay = getElement("score");
 const inputField = getElement("input");
-const highScoreDisplay = getElement("high-score");
 
 //* SCOREBOARD ELEMENTS
 const scoreboard = getElement("scoreboard");
@@ -66,7 +65,7 @@ let timeRemaining =20;
 let score = 0;
 let gameLoopTimeoutId = null;
 let wordsInGame = [];
-
+let timesUpSoundTimeoutId = null;
 /*
 !------------------------------------------
 !              SOUNDS                     |
@@ -97,7 +96,7 @@ const typingSound = createAudio(
 const timesUpSound = createAudio("./assets/media/sounds/times-up.mp3", 0.2);
 const gameOverSound = createAudio("./assets/media/sounds/game-over.mp3", 0.2);
 const countdownSound = createAudio(
-  "./assets/media/sounds/countdown.wav",
+  "./assets/media/sounds/countdown.mp3",
   0.2, false, 1
 );
 
@@ -160,7 +159,7 @@ function startGame() {
         backgroundMusic.play();
         generateWords();
         gameLoop();
-        setTimeout(
+        timesUpSoundTimeoutId = setTimeout(
           () => playSoundForLimitedTime(timesUpSound, 10000),
           TIMES_UP_DELAY
         );
@@ -320,6 +319,12 @@ function resetGame() {
   clearGameLoop();
   clearIO();
   backgroundMusic.currentTime = 0;
+  timesUpSound.currentTime = 0;
+  timesUpSound.pause();
+  if (timesUpSoundTimeoutId) {
+    clearTimeout(timesUpSoundTimeoutId);
+    timesUpSoundTimeoutId = null;
+  }
   inputField.focus();
   inputField.disabled = true;
   document.body.classList.remove('game-started');
