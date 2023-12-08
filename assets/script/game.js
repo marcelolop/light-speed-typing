@@ -55,9 +55,6 @@ const countdown = getElement("countdown");
 !------------------------------------------
 */
 
-//* GAME CONSTANTS
-const TIMES_UP_DELAY = 10000;
-const GAME_LOOP_DELAY = 1000;
 
 //* GAME VARIABLES
 let currentWord = "";
@@ -66,6 +63,14 @@ let score = 0;
 let gameLoopTimeoutId = null;
 let wordsInGame = [];
 let timesUpSoundTimeoutId = null;
+
+//* GAME CONSTANTS
+const TIMES_UP_DELAY = 10000;
+const GAME_LOOP_DELAY = 1000;
+const finalScore = score;
+
+
+
 /*
 !------------------------------------------
 !              SOUNDS                     |
@@ -179,9 +184,16 @@ function updateScore() {
   currentWord = "";
   inputField.value = "";
   generateWords();
+  if (wordsInGame.length === 0) {
+    endGame();
+  }
 }
 
+
 function gameLoop() {
+  if (wordsInGame.length === 0) {
+    return;
+  }
   timeDisplay.textContent = `${timeRemaining} s`;
 
   if (timeRemaining <= 0) {
@@ -234,11 +246,9 @@ function createParagraphElement(textContent) {
 }
 
 function getEndGameMessage(finalScore) {
-  return finalScore === words.length ? "Flawless Victory" : "Game Over!";
+  return finalScore === wordsInGame.length ? "Flawless Victory" : "Game Over!";
 }
-
 function endGame() {
-  const finalScore = score;
   const scoreObject = createScoreObject(finalScore);
   
   updateHighScore();
@@ -407,19 +417,21 @@ const words = [
   'download', 'blue', 'actor', 'desk', 'watch', 'giraffe', 'brazil', 'mask',
   'audio', 'school', 'detective', 'hero', 'progress', 'winter', 'passion',
   'rebel', 'amber', 'jacket', 'article', 'paradox', 'social', 'resort', 'escape'
-];
+ ];
 
 function generateWords() {
-    let index = Math.floor(Math.random() * wordsInGame.length);
-    currentWord = wordsInGame.splice(index, 1)[0];
-    wordDisplay.textContent = ""; 
-  
+  let index = Math.floor(Math.random() * wordsInGame.length);
+  currentWord = wordsInGame.splice(index, 1)[0];
+  wordDisplay.textContent = ""; 
+
+  if (currentWord) {
     for (let letter of currentWord) {
       let span = document.createElement("span");
       span.textContent = letter;
       wordDisplay.appendChild(span);
     }
   }
+}
 
   function handleInput() {
     let spans = wordDisplay.querySelectorAll("span");
