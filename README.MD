@@ -1,8 +1,8 @@
-# ⚡Light Speed Typing Game⚡
+# ⚡TypePixel Runner⚡
 
 ## Description
 
-Welcome to Light Speed Typing Game. This game is designed to test your typing speed.
+Welcome to TypePixel Runner Game. This game is designed to test your typing speed.
 
 ## How to play
 
@@ -14,4 +14,4 @@ Welcome to Light Speed Typing Game. This game is designed to test your typing sp
 
 ## Demo
 
- Click [here](https://marcelolop.github.io/light-speed-typing/) to play the game.
+ Click [here](https://marcelolop.github.io/typepixel-runner/) to play the game.

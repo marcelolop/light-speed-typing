@@ -1,7 +1,25 @@
 "use strict";
 
 import { onEvent, getElement, select, selectAll } from "./util/general.js";
-import Score from "./classes/Score.js";
+
+/*
+Directions and requirements
+* Utilize the typing game created in the previous course.
+* Address and fix the issues highlighted in the earlier feedback (this step is crucial).
+* Ensure your game lasts between 15 and 20 seconds so that we can easily test it.
+* Use regular objects to store hits, percentage and date. Don't use the Score class here.
+* Incorporate these objects into an array and store the array using localStorage.
+* Employ JSON.stringify() and JSON.parse() for manipulating the data (the array of objects).
+* Sort and 'splice' the array of ‘scores’ by hits before storing it, so you can always store the top
+* games, not all of them. localStorage is limited.
+* Display the top 9 or 10 scores in the scoreboard (see example provided).
+* Ensure the scoreboard updates after every game (whenever the player gets a better score).
+* Decide whether to automatically display the scoreboard when the game ends or implement a
+* button for this purpose, available upon page loading and game completion. Don't show the
+* scoreboard midgame.
+* Display the scoreboard only when it contains data; otherwise, show a message indicating no
+* games have been played.
+*/
 
 /*
 !------------------------------------------
@@ -16,17 +34,21 @@ const timeDisplay = getElement("time");
 const scoreDisplay = getElement("score");
 const inputField = getElement("input");
 const highScoreDisplay = getElement("high-score");
-const titleSpans = selectAll(".title span");
 
 //* SCOREBOARD ELEMENTS
+const scoreboard = getElement("scoreboard");
 const dateScoreContainer = select(".date-score-container");
 const scoreScoreContainer = select(".score-score-container");
 const percentageScoreContainer = select(".percentage-score-container");
+const scoreboardMessage = select(".scoreboard-message");
 
 //* TOGGLE BUTTON ELEMENTS
 const toggleButton = getElement("toggleButton");
-const scoreboard = getElement("scoreboard");
-const arrow = getElement("arrow");
+const toggleIcon = getElement("toggleIcon");
+
+//* COUNTDOWN DIALOG ELEMENTS
+const countdownModal = getElement("countdown-dialog");
+const countdown = getElement("countdown");
 
 /*
 !------------------------------------------
@@ -35,12 +57,12 @@ const arrow = getElement("arrow");
 */
 
 //* GAME CONSTANTS
-const TIMES_UP_DELAY = 69000;
+const TIMES_UP_DELAY = 10000;
 const GAME_LOOP_DELAY = 1000;
 
 //* GAME VARIABLES
 let currentWord = "";
-let timeRemaining = 99;
+let timeRemaining = 30;
 let score = 0;
 let gameLoopTimeoutId = null;
 let wordsInGame = [];
@@ -85,7 +107,7 @@ function playSoundForLimitedTime(audio, duration) {
   audio.play();
   setTimeout(() => {
     audio.pause();
-    audio.currentTime = 0; // isso é para resetar o som para o início
+    audio.currentTime = 0;
   }, duration);
 }
 
@@ -95,18 +117,56 @@ function playSoundForLimitedTime(audio, duration) {
 !------------------------------------------
 */
 
+window.onload = function () {
+  inputField.disabled = true;
+
+  let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
+  scoreboard.sort((a, b) => b.hits - a.hits); // Adicione esta linha
+
+  scoreboard.forEach(score => {
+    dateScoreContainer.appendChild(createParagraphElement(`${score.date}`));
+    scoreScoreContainer.appendChild(createParagraphElement(`${score.hits}`));
+    percentageScoreContainer.appendChild(createParagraphElement(`${score.percentage}%`));
+  });
+
+  detectScoreboard();
+}
+
 function startGame() {
-    resetGame();
-    wordsInGame = [...words]; // Create a copy of the words array
-    backgroundMusic.play();
-    generateWords();
-    gameLoop();
-    setTimeout(
-      () => playSoundForLimitedTime(timesUpSound, 30000),
-      TIMES_UP_DELAY
-  );
-  inputField.focus();
-  }
+  inputField.disabled = false;
+  let countdownNumber = 3;
+  let countdownElement = countdown;
+  countdownModal.showModal();
+  countdownElement.textContent = countdownNumber;
+  countdownElement.classList.remove('go-text');
+  toggleButton.disabled = true;
+  let countdownInterval = setInterval(function() {
+    countdownNumber--;
+    if (countdownNumber <= 0) {
+      clearInterval(countdownInterval);
+      countdownElement.textContent = 'GO!';
+      countdownElement.classList.add('go-text'); 
+      setTimeout(function() {
+        countdownModal.close();
+        resetGame();
+        wordsInGame = [...words];
+        backgroundMusic.play();
+        generateWords();
+        gameLoop();
+        setTimeout(
+          () => playSoundForLimitedTime(timesUpSound, 10000),
+          TIMES_UP_DELAY
+        );
+        inputField.disabled = false;
+        inputField.focus();
+        document.body.classList.add('game-started');
+      }, 1000);
+    } else {
+      countdownElement.textContent = countdownNumber;
+    }
+  }, 1000);
+}
+
 
 function updateScore() {
   score++;
@@ -142,73 +202,101 @@ function validateInput(event) {
 onEvent("keypress", inputField, validateInput);
 
 function createScoreObject(finalScore) {
-    return new Score(
-      new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      finalScore,
-      ((finalScore / words.length) * 100).toFixed(2) // Use words.length instead of wordsInGame.length
-    );
-  }
+  const date = new Date().toLocaleString("en-US", {month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+  const score = finalScore;
+  const percentage = ((finalScore / words.length) * 100).toFixed(2);
+
+  return {
+    date: date,
+    hits: score,
+    percentage: percentage
+  };
+}
 
 function updateTitle(message) {
+  generateTitleSpans(message);
+  const titleSpans = document.querySelectorAll('.title span');
+
   for (let i = 0; i < titleSpans.length; i++) {
-    if (message[i] === " ") {
-      titleSpans[i].textContent = "";
-      titleSpans[i].className = "space";
-    } else if (message[i]) {
-      titleSpans[i].textContent = message[i];
-      titleSpans[i].style.color =
-        message === "Flawless Victory" ? "green" : "red";
-      titleSpans[i].className = ""; 
-    } else {
-      titleSpans[i].textContent = "";
-      titleSpans[i].className = ""; 
-    }
+    titleSpans[i].style.color = message === "Flawless Victory" ? "green" : "red";
   }
+}
+
+function createParagraphElement(textContent) {
+  const p = document.createElement("p");
+  p.textContent = textContent;
+  return p;
+}
+
+function getEndGameMessage(finalScore) {
+  return finalScore === words.length ? "Flawless Victory" : "Game Over!";
 }
 
 function endGame() {
   const finalScore = score;
-
   const scoreObject = createScoreObject(finalScore);
-
+  
   updateHighScore();
 
-  const dateElement = document.createElement("p");
-  const scoreElement = document.createElement("p");
-  const percentageElement = document.createElement("p");
+  dateScoreContainer.appendChild(createParagraphElement(`${scoreObject.date}`));
+  scoreScoreContainer.appendChild(createParagraphElement(`${scoreObject.hits}`));
+  percentageScoreContainer.appendChild(createParagraphElement(`${scoreObject.percentage}%`));
 
-  dateElement.textContent = `${scoreObject.date}`;
-  scoreElement.textContent = `${scoreObject.hits}`;
-  percentageElement.textContent = `${scoreObject.percentage}%`;
+  const message = getEndGameMessage(finalScore);
 
-  dateScoreContainer.appendChild(dateElement);
-  scoreScoreContainer.appendChild(scoreElement);
-  percentageScoreContainer.appendChild(percentageElement);
-
-  let message = finalScore === 120 ? "Flawless Victory" : "Game Over!";
-
-  updateTitle(message);
   resetGame();
+  updateTitle(message);
 
   playSoundForLimitedTime(gameOverSound, 1000);
+
+  storeScoreValues(scoreObject);
+  updateScoreboard();
+  toggleButton.disabled = false;
+  detectScoreboard();
+}
+
+function storeScoreValues(scoreObject) {
+  let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
+  scoreboard.push(scoreObject); 
+
+  scoreboard.sort((a, b) => b.hits - a.hits);
+
+  if (scoreboard.length > 10) {
+    scoreboard.length = 10;
+  }
+
+  localStorage.setItem("scoreboard", JSON.stringify(scoreboard));
+}
+
+function generateTitleSpans(title) {
+  const titleContainer = document.querySelector('.title');
+  titleContainer.innerHTML = ''; // Clear the title container
+
+  for (let char of title) {
+    let span = document.createElement('span');
+    span.textContent = char === " " ? "" : char;
+    span.className = char === " " ? "space" : "";
+    span.style.color = "#fff";
+    titleContainer.appendChild(span);
+  }
+}
+
+function updateScoreboard() {
+  selectAll(".date-score-container p").forEach(el => el.innerHTML = '');
+  selectAll(".score-score-container p").forEach(el => el.innerHTML = '');
+  selectAll(".percentage-score-container p").forEach(el => el.innerHTML = '');
+
+  let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
+  scoreboard.forEach(score => {
+    dateScoreContainer.appendChild(createParagraphElement(`${score.date}`));
+    scoreScoreContainer.appendChild(createParagraphElement(`${score.hits}`));
+    percentageScoreContainer.appendChild(createParagraphElement(`${score.percentage}%`));
+  });
 }
 
 function resetTitle() {
-  let originalTitle = "Light Speed Typing";
-
-  for (let [i, span] of titleSpans.entries()) {
-    if (originalTitle[i] === " ") {
-      span.textContent = "";
-      span.className = "space";
-    } else if (originalTitle[i]) {
-      span.textContent = originalTitle[i];
-      span.style.color = "#fff"; // Reset to original color
-      span.className = ""; // remove the 'space' class if it was added before
-    } else {
-      span.textContent = "";
-      span.className = ""; // remove the 'space' class if it was added before
-    }
-  }
+  let originalTitle = "TypePixel Runner";
+  generateTitleSpans(originalTitle);
 }
 
 onEvent("click", startButton, resetTitle);
@@ -227,6 +315,10 @@ function resetGame() {
   clearIO();
   backgroundMusic.currentTime = 0;
   inputField.focus();
+  inputField.disabled = true;
+  document.body.classList.remove('game-started');
+  inputField.value = "";
+  resetTitle();
 }
 
 function resetButton() {
@@ -242,7 +334,7 @@ function shuffleWords() {
 
 function resetGameState() {
   currentWord = "";
-  timeRemaining = 99;
+  timeRemaining = 30;
   score = 0;
   inputField.placeholder = "";
   scoreDisplay.textContent = score;
@@ -271,14 +363,12 @@ function handleButtonClick() {
 onEvent("click", startButton, handleButtonClick);
 
 function updateHighScore() {
-  let highScore = localStorage.getItem("highScore") || 0;
+  let highScore = Number(localStorage.getItem("highScore")) || 0;
 
   if (score > highScore) {
     localStorage.setItem("highScore", score);
     highScore = score;
   }
-
-  highScoreDisplay.textContent = highScore;
 }
 
 /*
@@ -288,24 +378,24 @@ function updateHighScore() {
 */
 
 const words = [
-    'dinosaur', 'love', 'pineapple', 'calendar', 'robot', 'building',
-    'population', 'weather', 'bottle', 'history', 'dream', 'character', 'money',
-    'absolute', 'discipline', 'machine', 'accurate', 'connection', 'rainbow',
-    'bicycle', 'eclipse', 'calculator', 'trouble', 'watermelon', 'developer',
-    'philosophy', 'database', 'periodic', 'capitalism', 'abominable',
-    'component', 'future', 'pasta', 'microwave', 'jungle', 'wallet', 'canada',
-    'coffee', 'beauty', 'agency', 'chocolate', 'eleven', 'technology', 'promise',
-    'alphabet', 'knowledge', 'magician', 'professor', 'triangle', 'earthquake',
-    'baseball', 'beyond', 'evolution', 'banana', 'perfume', 'computer',
-    'management', 'discovery', 'ambition', 'music', 'eagle', 'crown', 'chess',
-    'laptop', 'bedroom', 'delivery', 'enemy', 'button', 'superman', 'library',
-    'unboxing', 'bookstore', 'language', 'homework', 'fantastic', 'economy',
-    'interview', 'awesome', 'challenge', 'science', 'mystery', 'famous',
-    'league', 'memory', 'leather', 'planet', 'software', 'update', 'yellow',
-    'keyboard', 'window', 'beans', 'truck', 'sheep', 'band', 'level', 'hope',
-    'download', 'blue', 'actor', 'desk', 'watch', 'giraffe', 'brazil', 'mask',
-    'audio', 'school', 'detective', 'hero', 'progress', 'winter', 'passion',
-    'rebel', 'amber', 'jacket', 'article', 'paradox', 'social', 'resort', 'escape'
+  'dinosaur', 'love', 'pineapple', 'calendar', 'robot', 'building',
+  'population', 'weather', 'bottle', 'history', 'dream', 'character', 'money',
+  'absolute', 'discipline', 'machine', 'accurate', 'connection', 'rainbow',
+  'bicycle', 'eclipse', 'calculator', 'trouble', 'watermelon', 'developer',
+  'philosophy', 'database', 'periodic', 'capitalism', 'abominable',
+  'component', 'future', 'pasta', 'microwave', 'jungle', 'wallet', 'canada',
+  'coffee', 'beauty', 'agency', 'chocolate', 'eleven', 'technology', 'promise',
+  'alphabet', 'knowledge', 'magician', 'professor', 'triangle', 'earthquake',
+  'baseball', 'beyond', 'evolution', 'banana', 'perfume', 'computer',
+  'management', 'discovery', 'ambition', 'music', 'eagle', 'crown', 'chess',
+  'laptop', 'bedroom', 'delivery', 'enemy', 'button', 'superman', 'library',
+  'unboxing', 'bookstore', 'language', 'homework', 'fantastic', 'economy',
+  'interview', 'awesome', 'challenge', 'science', 'mystery', 'famous',
+  'league', 'memory', 'leather', 'planet', 'software', 'update', 'yellow',
+  'keyboard', 'window', 'beans', 'truck', 'sheep', 'band', 'level', 'hope',
+  'download', 'blue', 'actor', 'desk', 'watch', 'giraffe', 'brazil', 'mask',
+  'audio', 'school', 'detective', 'hero', 'progress', 'winter', 'passion',
+  'rebel', 'amber', 'jacket', 'article', 'paradox', 'social', 'resort', 'escape'
 ];
 
 function generateWords() {
@@ -320,33 +410,38 @@ function generateWords() {
     }
   }
 
-function handleInput() {
-  let spans = wordDisplay.querySelectorAll("span");
-  let inputValue = inputField.value;
-
-  for (let i = 0; i < spans.length; i++) {
-    if (inputValue[i]) {
-      if (inputValue[i] === spans[i].textContent) {
+  function handleInput() {
+    let spans = wordDisplay.querySelectorAll("span");
+    let inputValue = inputField.value;
+  
+    for (let i = 0; i < spans.length; i++) {
+      if (inputValue[i] && inputValue[i].toLowerCase() === spans[i].textContent.toLowerCase()) {
         spans[i].classList.add("valid");
-        spans[i].classList.remove("invalid");
       } else {
-        spans[i].classList.add("invalid");
         spans[i].classList.remove("valid");
       }
-    } else {
-      spans[i].classList.remove("valid");
-      spans[i].classList.remove("invalid");
     }
+    inputField.focus();
   }
-  inputField.focus();
-}
+  
 
 onEvent("input", inputField, handleInput);
 
 function toggleScoreboard() {
   scoreboard.classList.toggle("visible");
-  arrow.classList.toggle("fa-arrow-down");
-  arrow.classList.toggle("fa-arrow-up");
+  toggleIcon.classList.toggle("fa-trophy");
+  toggleIcon.classList.toggle("fa-times");
 }
 
 onEvent("click", toggleButton, toggleScoreboard);
+
+// função para detectar se não há nenhuma pontuação no localStorage e mudar a mensagem do scoreboard-message para "no games have been played"
+
+function detectScoreboard() {
+  if (localStorage.getItem("highScore") === null) {
+    scoreboardMessage.textContent = "No games have been played yet!";
+    toggleButton.disabled = true;
+  } else {
+    scoreboardMessage.textContent = "high score: " + localStorage.getItem("highScore");
+  }
+}

@@ -9,84 +9,108 @@
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="./assets/media/images/logo/logo.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      href="./assets/media/images/logo/logo.png"
+      type="image/x-icon"
+    />
     <script src="./assets/script/game.js" type="module"></script>
-    <title>Light Speed Typing</title>
-</head>
-<body>
+    <title>TypePixel Runner</title>
+  </head>
+  <body>
     <main>
-        <div class="container game-header">
-            <div class="start-restart-btn">
-                <button id="start-btn">
-                    <i id ="start-icon" class="fas fa-play start-icon"></i>
-                    Start</button>
-            </div>
-            <div class="title">
-                <span>L</span>
-                <span>i</span>
-                <span>g</span>
-                <span>h</span>
-                <span>t</span>
-                <span class="space"> </span>
-                <span>S</span>
-                <span>p</span>
-                <span>e</span>
-                <span>e</span>
-                <span>d</span>
-                <span class="space"> </span> 
-                <span>T</span>
-                <span>y</span>
-                <span>p</span>
-                <span>i</span>
-                <span>n</span>
-                <span>g</span>
-            </div>
-            <div class="timer">
-                <i class="fas fa-clock">    
-                </i>
-                <span id="time">0&nbsp;s</span>
-            </div>
+      <div class="container game-header">
+        <div class="start-restart-btn">
+          <button id="start-btn">
+            <i id="start-icon" class="fas fa-play start-icon"></i>
+            Start
+          </button>
         </div>
-        <div class="container input-output ">
-            <div class="output-container">
-                <p class="output" id="output"></p>
-            </div>
-            <div class="input-container">
-                <input class="input" type="text" id="input" placeholder="Start Typing">
-            </div>
+        <div class="timer">
+          <i class="fas fa-clock"> </i>
+          <span id="time">0&nbsp;s</span>
         </div>
-        <div class="container score-board">
-            <div class="current-score">
-                <div class="high">
-                    <p>High Score: <span id="high-score">0</span></p>
-                </div>
-                <div class="score">
-                    <p>Score: <span id="score">0</span></p>
-                </div>
-            </div>
-            <div class="score-dashboard">
-                <h2>Scoreboard</h2>
-                <button title="Toggle-scoreboard" class="toggle-button" id="toggleButton"><i id="arrow" class="fas fa-arrow-down"></i></button>
-                <div id="scoreboard">
-                    <div class="date-score-container">
-                        <h3>Date</h3>
-                        <p class="date-score"></p>
-                    </div>
-                    <div class="score-score-container">
-                        <h3>Score</h3>
-                        <p class="score-score"></p>
-                    </div>
-                    <div class="percentage-score-container">
-                        <h3>Percentage</h3>
-                        <p class="percentage-score"></p>
-                    </div>
-                </div>
-            </div>
+        <div class="title">
+          <div class="light-speed-typing">
+            <span>T</span>
+            <span>y</span>
+            <span>p</span>
+            <span>e</span>
+            <span>P</span>
+            <span>i</span>
+            <span>x</span>
+            <span>e</span>
+            <span>l</span>
+            <span class="space"> </span>
+            <span>R</span>
+            <span>u</span>
+            <span>n</span>
+            <span>n</span>
+            <span>e</span>
+            <span>r</span>
+          </div>
         </div>
+      </div>
+      <div class="current-score">
+        <div class="score">
+          <p>Score: <span id="score">0</span></p>
+        </div>
+      </div>
+      <div class="container input-output">
+        <div class="output-container">
+          <p class="output" id="output"></p>
+        </div>
+        <div class="input-container">
+          <input
+            class="input"
+            type="text"
+            id="input"
+            placeholder="Press Start "
+          />
+        </div>
+      </div>
+      <div class="container score-board">
+        <div class="score-dashboard">
+          <h2>Scoreboard</h2>
+          <button
+            title="Toggle-scoreboard"
+            class="toggle-button"
+            id="toggleButton"
+          >
+            <i id="toggleIcon" class="fas fa-trophy"></i>
+          </button>
+          <div class="scoreboard-message-container">
+            <p class="scoreboard-message"></p>
+          </div>
+          <div id="scoreboard">
+            <div class="date-score-container">
+              <h3>Date</h3>
+              <p class="date-score"></p>
+            </div>
+            <div class="score-score-container">
+              <h3>Score</h3>
+              <p class="score-score"></p>
+            </div>
+            <div class="percentage-score-container">
+              <h3>Percentage</h3>
+              <p class="percentage-score"></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
-    
-</body>
+    <!--Modal for countdown-->
+    <dialog id="countdown-dialog" class="dialog">
+      <div class="dialog-content">
+        <i class="fas fa-stopwatch"></i>
+        <h1 id="countdown">3</h1>
+      </div>
+    </dialog>
+  </body>
 </html>
