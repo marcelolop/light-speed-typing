@@ -62,7 +62,7 @@ const GAME_LOOP_DELAY = 1000;
 
 //* GAME VARIABLES
 let currentWord = "";
-let timeRemaining = 30;
+let timeRemaining =20;
 let score = 0;
 let gameLoopTimeoutId = null;
 let wordsInGame = [];
@@ -96,6 +96,11 @@ const typingSound = createAudio(
 );
 const timesUpSound = createAudio("./assets/media/sounds/times-up.mp3", 0.2);
 const gameOverSound = createAudio("./assets/media/sounds/game-over.mp3", 0.2);
+const countdownSound = createAudio(
+  "./assets/media/sounds/countdown.wav",
+  0.2, false, 1
+);
+
 
 onEvent("keydown", inputField, () => {
   const sound = typingSound.cloneNode();
@@ -121,7 +126,7 @@ window.onload = function () {
   inputField.disabled = true;
 
   let scoreboard = JSON.parse(localStorage.getItem("scoreboard")) || [];
-  scoreboard.sort((a, b) => b.hits - a.hits); // Adicione esta linha
+  scoreboard.sort((a, b) => b.hits - a.hits);
 
   scoreboard.forEach(score => {
     dateScoreContainer.appendChild(createParagraphElement(`${score.date}`));
@@ -137,6 +142,8 @@ function startGame() {
   let countdownNumber = 3;
   let countdownElement = countdown;
   countdownModal.showModal();
+  countdownSound.play();
+  playSoundForLimitedTime(countdownSound, 4000);
   countdownElement.textContent = countdownNumber;
   countdownElement.classList.remove('go-text');
   toggleButton.disabled = true;
@@ -166,7 +173,6 @@ function startGame() {
     }
   }, 1000);
 }
-
 
 function updateScore() {
   score++;
@@ -334,7 +340,7 @@ function shuffleWords() {
 
 function resetGameState() {
   currentWord = "";
-  timeRemaining = 30;
+  timeRemaining =20;
   score = 0;
   inputField.placeholder = "";
   scoreDisplay.textContent = score;
@@ -434,8 +440,6 @@ function toggleScoreboard() {
 }
 
 onEvent("click", toggleButton, toggleScoreboard);
-
-// função para detectar se não há nenhuma pontuação no localStorage e mudar a mensagem do scoreboard-message para "no games have been played"
 
 function detectScoreboard() {
   if (localStorage.getItem("highScore") === null) {
