@@ -411,7 +411,7 @@ const words = [
 
 function generateWords() {
     let index = Math.floor(Math.random() * wordsInGame.length);
-    currentWord = wordsInGame.splice(index, 1)[0]; // Use wordsInGame instead of words
+    currentWord = wordsInGame.splice(index, 1)[0];
     wordDisplay.textContent = ""; 
   
     for (let letter of currentWord) {
@@ -451,6 +451,6 @@ function detectScoreboard() {
     scoreboardMessage.textContent = "No games have been played yet!";
     toggleButton.disabled = true;
   } else {
-    scoreboardMessage.textContent = "high score: " + localStorage.getItem("highScore");
+    scoreboardMessage.textContent = `High Score: ${localStorage.getItem("highScore")}`;
   }
 }
