@@ -38,14 +38,14 @@ const countdown = getElement("countdown");
 
 //* GAME VARIABLES
 let currentWord = "";
-let timeRemaining = 20;
+let timeRemaining = 99;
 let score = 0;
 let gameLoopTimeoutId = null;
 let wordsInGame = [];
 let timesUpSoundTimeoutId = null;
 
 //* GAME CONSTANTS
-const TIMES_UP_DELAY = 10000;
+const TIMES_UP_DELAY = 89000;
 const GAME_LOOP_DELAY = 1000;
 const finalScore = score;
 
@@ -355,7 +355,7 @@ function shuffleWords() {
 
 function resetGameState() {
   currentWord = "";
-  timeRemaining = 20;
+  timeRemaining = 99;
   score = 0;
   inputField.placeholder = "";
   scoreDisplay.textContent = score;
