@@ -21,11 +21,11 @@ I used a more detailed approach with structure so the code has more sections wit
 
 ## Technologies Used:
 
- HTML: Structured the layout and content of the game.
- CSS: Styled the visual elements and made the game visually appealing.
- JavaScript: Implemented the game logic, including word generation, input validation, scoring, and timer functionality.
- LocalStorage: Stored high scores locally on the player's device to persist across sessions.
- SessionStorage: Stored temporary game data, such as the current word and remaining time, to maintain game state during gameplay.
+*HTML: Structured the layout and content of the game.
+*CSS: Styled the visual elements and made the game visually appealing.
+*JavaScript: Implemented the game logic, including word generation, input validation, scoring, and timer functionality.
+*LocalStorage: Stored high scores locally on the player's device to persist across sessions.
+*SessionStorage: Stored temporary game data, such as the current word and remaining time, to maintain the game state during gameplay.
 
 ## Features:
 
