@@ -19,7 +19,7 @@ I used a more detailed approach with structure so the code has more sections wit
 4. The user will be able to see their current score and high score at the end of the game
 5. The user will also be able to see a history of their scores by clicking on the scoreboard button
 
-##Technologies Used:
+## Technologies Used:
 
  HTML: Structured the layout and content of the game.
  CSS: Styled the visual elements and made the game visually appealing.
